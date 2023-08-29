@@ -1,10 +1,10 @@
-[![Linux (gcc/clang)](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-linux.yml)
+[![Linux (gcc/clang)](https://github.com/olealgoritme/vscit/actions/workflows/cmake-linux.yml/badge.svg)](https://github.com/olealgoritme/vscit/actions/workflows/cmake-linux.yml)
 
-[![MacOS ARM](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-macos-arm.yml/badge.svg)](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-macos-arm.yml)
+[![MacOS ARM](https://github.com/olealgoritme/vscit/actions/workflows/cmake-macos-arm.yml/badge.svg)](https://github.com/olealgoritme/vscit/actions/workflows/cmake-macos-arm.yml)
 
-[![MacOS x64](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-macos-x64.yml/badge.svg)](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-macos-x64.yml)
+[![MacOS x64](https://github.com/olealgoritme/vscit/actions/workflows/cmake-macos-x64.yml/badge.svg)](https://github.com/olealgoritme/vscit/actions/workflows/cmake-macos-x64.yml)
 
-[![Windows (MSVC)](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-windows.yml/badge.svg)](https://github.com/olealgoritme/cpp_cmake_ci/actions/workflows/cmake-windows.yml)
+[![Windows (MSVC)](https://github.com/olealgoritme/vscit/actions/workflows/cmake-windows.yml/badge.svg)](https://github.com/olealgoritme/vscit/actions/workflows/cmake-windows.yml)
 
 ### VSCIT - Very Small CPU Information Tool 
 - Displays CPU info:
