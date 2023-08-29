@@ -51,3 +51,5 @@ git submodule update --init --recursive
 cmake -S . -B build
 cmake --build build
 ```
+
+![vscit output](/vscit_screenshot.png?raw=true)
