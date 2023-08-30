@@ -40,7 +40,7 @@ void CPU::printDetails(void)
     std::cout << cores << std::endl;
 
 // mac arm
-#elif defined(__APPLE__) && defined(__arm64__)
+#if defined(__arm64__)
 #include <sys/time.h>
   uint64_t freqMHz = 0;
   freqMHz = getCurrFrequency();
@@ -48,9 +48,10 @@ void CPU::printDetails(void)
     std::cout << std::left << std::setw(20) 
       << fmt::format(fg(fmt::rgb(0xFFFF00)), "Min. Freq: ") 
       << freqMHz << " MHz" << std::endl;
+#endif
 
 // mac intel
-#elif defined(__APPLE__) && defined(__x86_64__)
+#if defined(__x86_64__)
   uint64_t min = 0;
   uint64_t max = 0;
   size_t size = sizeof(min);
@@ -75,6 +76,7 @@ void CPU::printDetails(void)
     std::cout << std::left << std::setw(20) << fmt::format(fg(fmt::rgb(0xFFFF00)), "Cur. Freq: ");
     std::cout << (curr / 1000 / 1000) << " MHz " << std::endl;
 
+#endif
 #else // != __APPLE__
   auto sockets = hwinfo::getAllSockets();
 
