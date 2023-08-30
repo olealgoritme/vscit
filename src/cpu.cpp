@@ -129,14 +129,15 @@ uint64_t CPU::getCurrFrequency(void)
   return freqMHz;
 #endif 
 
-    len = sizeof(freqMHz);
-    mib[0] = CTL_HW;
-    mib[1] = HW_CPU_FREQ;
+  int mib[2];
+  size_t len = sizeof(freqMHz);
+  mib[0] = CTL_HW;
+  mib[1] = HW_CPU_FREQ;
 
-    if (sysctl(mib, 2, &freqMHz, &len, NULL, 0) < 0)
-      return -1;
-    else
-      return (freqMHz / 1000 / 1000);
+  if (sysctl(mib, 2, &freqMHz, &len, NULL, 0) < 0)
+    return -1;
+  else
+    return (freqMHz / 1000 / 1000);
 #else // != __APPLE__
   auto sockets = hwinfo::getAllSockets();
   for (auto& s : sockets) {
