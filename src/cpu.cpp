@@ -15,7 +15,7 @@ void CPU::printDetails(void)
 {
   std::cout << fmt::format(fg(fmt::rgb(0x00FFAA00)), "--- CPU INFO ---" ) << std::endl;
 
-// macos intel/arm
+// macos arm
 #if defined(__APPLE__)
   uint64_t curr = 0;
   uint64_t cores = 0;
@@ -39,8 +39,8 @@ void CPU::printDetails(void)
     std::cout << std::left << std::setw(20) << fmt::format(fg(fmt::rgb(0xFFFF00)), "Cores: ");
     std::cout << cores << std::endl;
 
-// arm64 macos m1
-#if __arm64__
+// mac arm
+#elif defined(__APPLE__) && defined(__arm64__)
 #include <sys/time.h>
   uint64_t freqMHz = 0;
   freqMHz = getCurrFrequency();
@@ -48,10 +48,9 @@ void CPU::printDetails(void)
     std::cout << std::left << std::setw(20) 
       << fmt::format(fg(fmt::rgb(0xFFFF00)), "Min. Freq: ") 
       << freqMHz << " MHz" << std::endl;
-#endif // __arm64__
 
-// x86/x64 macos intel
-#ifdef __x86_64
+// mac intel
+#elif defined(__APPLE__) && defined(__x86_64__)
   uint64_t min = 0;
   uint64_t max = 0;
   size_t size = sizeof(min);
@@ -75,7 +74,6 @@ void CPU::printDetails(void)
   else
     std::cout << std::left << std::setw(20) << fmt::format(fg(fmt::rgb(0xFFFF00)), "Cur. Freq: ");
     std::cout << (curr / 1000 / 1000) << " MHz " << std::endl;
-#endif // __x86_64
 
 #else // != __APPLE__
   auto sockets = hwinfo::getAllSockets();
@@ -97,26 +95,27 @@ void CPU::printDetails(void)
     std::cout << std::left << std::setw(20) << fmt::format(fg(fmt::rgb(0xFFFF00)), "Cur. Freq: ");
     std::cout << cpu.currentClockSpeed_MHz() << " MHz " << std::endl;
   }
-#endif // __APPLE__
+#endif
 }
 
 // returns frequncy in MHz
 uint64_t CPU::getCurrFrequency(void)
 {
   uint64_t freqMHz = 0;
+  size_t size;
 
-// specific code for macos intel/arm
-#if defined(__APPLE__)
-#if __arm64__
+// mac arm
+#if defined(__APPLE__) && defined(__arm64__)
 #include <sys/time.h>
-  uint64_t tbfreq = 0;
-  size_t size = sizeof(tbfreq);
-
   int mib[2];
+  size_t len;
+  uint64_t tbfreq = 0;
+
+  size = sizeof(tbfreq);
   mib[0] = CTL_KERN;
   mib[1] = KERN_CLOCKRATE;
   struct clockinfo clockinfo;
-  size_t len = sizeof(clockinfo);
+  len = sizeof(clockinfo);
 
   // guesstimation on cpu base frequency ( time base frequency x kernel clock hz )
   sysctlbyname("hw.tbfrequency", &tbfreq, &size, NULL, 0);
@@ -127,10 +126,10 @@ uint64_t CPU::getCurrFrequency(void)
 
   freqMHz = (tbfreq / 1000 / 1000) * clockinfo.hz;
   return freqMHz;
-#endif 
 
-  int mib[2];
-  size_t len = sizeof(freqMHz);
+// mac intel
+#elif defined(__APPLE__) && defined(__x86_64__)
+  len = sizeof(freqMHz);
   mib[0] = CTL_HW;
   mib[1] = HW_CPU_FREQ;
 
@@ -138,6 +137,7 @@ uint64_t CPU::getCurrFrequency(void)
     return -1;
   else
     return (freqMHz / 1000 / 1000);
+
 #else // != __APPLE__
   auto sockets = hwinfo::getAllSockets();
   for (auto& s : sockets) {
@@ -145,6 +145,6 @@ uint64_t CPU::getCurrFrequency(void)
     freqMHz = cpu.currentClockSpeed_MHz();
     break;
   }
-#endif // __APPLE__
   return freqMHz;
+#endif
 }
