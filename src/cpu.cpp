@@ -103,12 +103,12 @@ uint64_t CPU::getCurrFrequency(void)
 {
   uint64_t freqMHz = 0;
   size_t size;
+  size_t len;
+  int mib[2];
 
 // mac arm
 #if defined(__APPLE__) && defined(__arm64__)
 #include <sys/time.h>
-  int mib[2];
-  size_t len;
   uint64_t tbfreq = 0;
 
   size = sizeof(tbfreq);
