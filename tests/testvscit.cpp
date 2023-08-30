@@ -8,14 +8,7 @@ TEST_CASE( "Quick test", "[test]" ) {
 }
 
 TEST_CASE( "Can Read CPU frequency", "[cpu]" ) {
-#if defined(__APPLE__)
-#if __arm64__
-  // can't read cpu frequency
-#else
     CPU cpu = CPU();
     uint64_t freq = cpu.getCurrFrequency();
     REQUIRE( freq != 0 );
-
-#endif // __arm64__
-#endif // __APPLE__
 }
