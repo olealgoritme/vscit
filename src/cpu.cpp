@@ -1,9 +1,9 @@
 #include <cpu/cpu.hpp>
 #if defined(__APPLE__) || defined(__arm64__)
-    #include <sys/types.h>
-    #include <sys/sysctl.h>
-    #include <sys/proc.h>
-    #include <string>
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <sys/proc.h>
+#include <string>
 #endif
 CPU::CPU(void)
 {}
@@ -41,8 +41,13 @@ void CPU::printDetails(void)
 
 // arm64 macos m1
 #if __arm64__
-// empty cpu frequency reading
-  return;
+#include <sys/time.h>
+  uint64_t freqMHz = 0;
+  freqMHz = getCurrFrequency();
+  if (freqMHz > 0)
+    std::cout << std::left << std::setw(20) 
+      << fmt::format(fg(fmt::rgb(0xFFFF00)), "Min. Freq: ") 
+      << freqMHz << " MHz" << std::endl;
 #endif // __arm64__
 
 // x86/x64 macos intel
@@ -98,30 +103,47 @@ void CPU::printDetails(void)
 // returns frequncy in MHz
 uint64_t CPU::getCurrFrequency(void)
 {
-  uint64_t freqMhz = 0;
+  uint64_t freqMHz = 0;
 
 // specific code for macos intel/arm
 #if defined(__APPLE__)
 #if __arm64__
-  return -1;
+#include <sys/time.h>
+  uint64_t tbfreq = 0;
+  size_t size = sizeof(tbfreq);
+
+  int mib[2];
+  mib[0] = CTL_KERN;
+  mib[1] = KERN_CLOCKRATE;
+  struct clockinfo clockinfo;
+  size_t len = sizeof(clockinfo);
+
+  // guesstimation on cpu base frequency ( time base frequency x kernel clock hz )
+  sysctlbyname("hw.tbfrequency", &tbfreq, &size, NULL, 0);
+  sysctl(mib, 2, &clockinfo, &len, NULL, 0);
+
+  if (tbfreq <= 0 || clockinfo.hz <= 0 )
+    return -1;
+
+  freqMHz = (tbfreq / 1000 / 1000) * clockinfo.hz;
+  return freqMHz;
 #endif 
 
-    int mib[2];
-    size_t len = sizeof(freqMhz);
+    len = sizeof(freqMHz);
     mib[0] = CTL_HW;
     mib[1] = HW_CPU_FREQ;
 
-    if (sysctl(mib, 2, &freqMhz, &len, NULL, 0) < 0)
+    if (sysctl(mib, 2, &freqMHz, &len, NULL, 0) < 0)
       return -1;
     else
-      return (freqMhz / 1000 / 1000);
+      return (freqMHz / 1000 / 1000);
 #else // != __APPLE__
   auto sockets = hwinfo::getAllSockets();
   for (auto& s : sockets) {
     const auto& cpu = s.CPU();
-    freqMhz = cpu.currentClockSpeed_MHz();
+    freqMHz = cpu.currentClockSpeed_MHz();
     break;
   }
 #endif // __APPLE__
-  return freqMhz;
+  return freqMHz;
 }
